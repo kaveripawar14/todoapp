@@ -1,4 +1,4 @@
-const API = "http://localhost:8081/tasks";
+const API = "/tasks";
 
 function loadTasks() {
     fetch(API)
