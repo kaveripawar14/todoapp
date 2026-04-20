@@ -1,4 +1,9 @@
-let loggedIn = false;
+let loggedInUser = "";
+
+// SHOW SIGNUP
+function showSignup() {
+    document.getElementById("signupDiv").style.display = "block";
+}
 
 // SIGNUP
 function signup() {
@@ -31,18 +36,26 @@ function login() {
     .then(res => res.text())
     .then(data => {
         alert(data);
+
         if (data === "Login successful") {
-            loggedIn = true;
+
+            loggedInUser = username;
+
+            // Hide auth
+            document.getElementById("authSection").style.display = "none";
+
+            // Show profile
+            document.getElementById("profileSection").style.display = "block";
+            document.getElementById("profileName").innerText = username;
+
+            // Show todo
+            document.getElementById("todoSection").style.display = "block";
         }
     });
 }
 
 // ADD TASK
 function addTask() {
-    if (!loggedIn) {
-        alert("Please login first!");
-        return;
-    }
 
     const taskInput = document.getElementById("taskInput");
     const task = taskInput.value;
@@ -53,15 +66,12 @@ function addTask() {
 
     const row = table.insertRow();
 
-    // Task
     const cell1 = row.insertCell(0);
     cell1.innerText = task;
 
-    // Status
     const cell2 = row.insertCell(1);
     cell2.innerText = "Pending";
 
-    // Action (Done)
     const cell3 = row.insertCell(2);
     const doneBtn = document.createElement("button");
     doneBtn.innerText = "Done";
@@ -70,11 +80,8 @@ function addTask() {
         cell2.innerText = "Done";
 
         const time = new Date().toLocaleTimeString();
-
-        // show time in action column
         cell3.innerText = "Done (" + time + ")";
 
-        // Clear Task column
         const cell4 = row.insertCell(3);
 
         const yesBtn = document.createElement("button");
