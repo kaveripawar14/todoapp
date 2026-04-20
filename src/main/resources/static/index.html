@@ -6,27 +6,42 @@
 </head>
 <body>
 
-<h1>📝 Todo Application</h1>
+<h1>Todo App</h1>
 
-<div class="input-box">
-    <input type="text" id="taskInput" placeholder="Enter task">
-    <input type="date" id="dateInput">
-    <button class="green" onclick="addTask()">Add Task</button>
+<!-- SIGNUP -->
+<div>
+    <h2>Signup</h2>
+    <input type="text" id="signupUsername" placeholder="Username">
+    <input type="password" id="signupPassword" placeholder="Password">
+    <button onclick="signup()">Signup</button>
 </div>
 
-<table>
-    <thead>
-        <tr>
-            <th>Task</th>
-            <th>Due Date</th>
-            <th>Status</th>
-            <th>Done Time</th>
-            <th>Clear Task</th>
-        </tr>
-    </thead>
+<!-- LOGIN -->
+<div>
+    <h2>Login</h2>
+    <input type="text" id="loginUsername" placeholder="Username">
+    <input type="password" id="loginPassword" placeholder="Password">
+    <button onclick="login()">Login</button>
+</div>
+
+<hr>
+
+<!-- TODO SECTION -->
+<h2>Add Task</h2>
+<input type="text" id="taskInput" placeholder="Enter task">
+<button onclick="addTask()">Add Task</button>
+
+<table border="1">
+    <tr>
+        <th>Task</th>
+        <th>Status</th>
+        <th>Action</th>
+        <th>Clear Task</th>
+    </tr>
     <tbody id="taskTable"></tbody>
 </table>
 
 <script src="script.js"></script>
+
 </body>
 </html>
