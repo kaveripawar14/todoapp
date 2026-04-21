@@ -1,70 +1,45 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Todo App</title>
-    <style>
-        body {
-            font-family: Arial;
-            text-align: center;
-            background: #f4f4f4;
-        }
+package com.example.todoapp.controller;
 
-        h1 {
-            color: #333;
-        }
+import com.example.todoapp.model.Task;
+import com.example.todoapp.service.TaskService;
+import org.springframework.web.bind.annotation.*;
 
-        input {
-            padding: 10px;
-            width: 200px;
-        }
+import java.util.List;
 
-        button {
-            padding: 10px;
-            margin: 5px;
-            cursor: pointer;
-        }
+@RestController
+@RequestMapping("/tasks")
+@CrossOrigin
+public class TaskController {
 
-        table {
-            margin: auto;
-            margin-top: 20px;
-            border-collapse: collapse;
-            width: 60%;
-            background: white;
-        }
+    private final TaskService service;
 
-        th, td {
-            padding: 10px;
-            border: 1px solid #ccc;
-        }
+    public TaskController(TaskService service) {
+        this.service = service;
+    }
 
-        th {
-            background: #333;
-            color: white;
-        }
-    </style>
-</head>
-<body>
+    // 🔄 GET ALL
+    @GetMapping
+    public List<Task> getAll() {
+        return service.getAllTasks();
+    }
 
-<h1>Todo App</h1>
+    // ➕ ADD
+    @PostMapping
+    public String addTask(@RequestBody Task task) {
+        service.addTask(task);
+        return "Task added";
+    }
 
-<!-- ADD TASK -->
-<input type="text" id="taskInput" placeholder="Enter task">
-<button onclick="addTask()">Add Task</button>
+    // ❌ DELETE
+    @DeleteMapping("/{id}")
+    public String deleteTask(@PathVariable Long id) {
+        service.deleteTask(id);
+        return "Task deleted";
+    }
 
-<!-- TABLE -->
-<table>
-    <thead>
-        <tr>
-            <th>Task</th>
-            <th>Status</th>
-            <th>Action</th>
-            <th>Clear Task</th>
-        </tr>
-    </thead>
-    <tbody id="taskTable"></tbody>
-</table>
-
-<script src="script.js"></script>
-
-</body>
-</html>
+    // ✏ UPDATE (IMPORTANT 🔥)
+    @PutMapping("/{id}")
+    public Task updateTask(@PathVariable Long id, @RequestBody Task updatedTask) {
+        return service.updateTask(id, updatedTask);
+    }
+}

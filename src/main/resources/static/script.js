@@ -68,11 +68,10 @@ function addTask() {
         input.value = "";
         if (date) date.value = "";
         loadTasks();
-    })
-    .catch(err => console.error("Add error:", err));
+    });
 }
 
-// ✔ MARK DONE
+// ✔ MARK DONE (UPDATE)
 function markDone(id) {
     fetch(API)
         .then(res => res.json())
@@ -88,26 +87,21 @@ function markDone(id) {
             task.completed = true;
             task.completedTime = time;
 
-            // delete + re-add (since PUT नाही)
-            fetch(API + "/" + id, { method: "DELETE" })
-                .then(() => {
-                    fetch(API, {
-                        method: "POST",
-                        headers: {"Content-Type": "application/json"},
-                        body: JSON.stringify(task)
-                    }).then(loadTasks);
-                });
+            fetch(API + "/" + id, {
+                method: "PUT",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(task)
+            }).then(loadTasks);
         });
 }
 
 // ❌ DELETE TASK (YES)
 function clearTask(id) {
     fetch(API + "/" + id, { method: "DELETE" })
-        .then(loadTasks)
-        .catch(err => console.error("Delete error:", err));
+        .then(loadTasks);
 }
 
-// 👍 GOOD JOB (NO)
+// 👍 GOOD JOB (NO → UPDATE)
 function sayGoodJob(id) {
     fetch(API)
         .then(res => res.json())
@@ -117,14 +111,11 @@ function sayGoodJob(id) {
 
             task.cleared = true;
 
-            fetch(API + "/" + id, { method: "DELETE" })
-                .then(() => {
-                    fetch(API, {
-                        method: "POST",
-                        headers: {"Content-Type": "application/json"},
-                        body: JSON.stringify(task)
-                    }).then(loadTasks);
-                });
+            fetch(API + "/" + id, {
+                method: "PUT",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(task)
+            }).then(loadTasks);
         });
 }
 

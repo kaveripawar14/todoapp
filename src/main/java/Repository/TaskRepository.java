@@ -10,12 +10,14 @@ import java.util.List;
 public class TaskRepository {
 
     private List<Task> tasks = new ArrayList<>();
+    private Long idCounter = 1L; // 🔥 ID generator
 
     public List<Task> getAll() {
         return tasks;
     }
 
     public void add(Task task) {
+        task.setId(idCounter++); // 🔥 auto ID
         tasks.add(task);
     }
 
