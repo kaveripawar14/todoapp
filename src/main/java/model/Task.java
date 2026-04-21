@@ -1,13 +1,19 @@
 package com.example.todoapp.model;
 
+import jakarta.persistence.*;
+
+@Entity
 public class Task {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
     private boolean completed;
     private String dueDate;
     private String completedTime;
-    private boolean cleared; // ⭐ NEW
+    private boolean cleared;
 
     public Task() {}
 

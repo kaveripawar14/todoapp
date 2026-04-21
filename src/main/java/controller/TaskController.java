@@ -1,36 +1,70 @@
-package com.example.todoapp.controller;
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Todo App</title>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background: #f4f4f4;
+        }
 
-import com.example.todoapp.model.Task;
-import com.example.todoapp.service.TaskService;
-import org.springframework.web.bind.annotation.*;
+        h1 {
+            color: #333;
+        }
 
-import java.util.List;
+        input {
+            padding: 10px;
+            width: 200px;
+        }
 
-@RestController
-@RequestMapping("/tasks")
-@CrossOrigin
-public class TaskController {
+        button {
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+        }
 
-    private final TaskService service;
+        table {
+            margin: auto;
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 60%;
+            background: white;
+        }
 
-    public TaskController(TaskService service) {
-        this.service = service;
-    }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
 
-    @GetMapping
-    public List<Task> getAll() {
-        return service.getAllTasks();
-    }
+        th {
+            background: #333;
+            color: white;
+        }
+    </style>
+</head>
+<body>
 
-    @PostMapping
-    public String addTask(@RequestBody Task task) {
-        service.addTask(task);
-        return "Task added";
-    }
+<h1>Todo App</h1>
 
-    @DeleteMapping("/{id}")
-    public String deleteTask(@PathVariable Long id) {
-        service.deleteTask(id);
-        return "Task deleted";
-    }
-}
+<!-- ADD TASK -->
+<input type="text" id="taskInput" placeholder="Enter task">
+<button onclick="addTask()">Add Task</button>
+
+<!-- TABLE -->
+<table>
+    <thead>
+        <tr>
+            <th>Task</th>
+            <th>Status</th>
+            <th>Action</th>
+            <th>Clear Task</th>
+        </tr>
+    </thead>
+    <tbody id="taskTable"></tbody>
+</table>
+
+<script src="script.js"></script>
+
+</body>
+</html>

@@ -1,108 +1,132 @@
-let loggedInUser = "";
+const API = "/tasks";
 
-// SHOW SIGNUP
-function showSignup() {
-    document.getElementById("signupDiv").style.display = "block";
+// 🔄 LOAD TASKS
+function loadTasks() {
+    fetch(API)
+        .then(res => res.json())
+        .then(data => {
+            const table = document.getElementById("taskTable");
+            table.innerHTML = "";
+
+            data.forEach(task => {
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${task.name}</td>
+                    <td>${task.dueDate || "No Date"}</td>
+
+                    <td>
+                        ${task.completed 
+                            ? "✔ Done" 
+                            : `<button onclick="markDone(${task.id})">Pending</button>`
+                        }
+                    </td>
+
+                    <td>${task.completedTime || "-"}</td>
+
+                    <td>
+                        ${task.cleared
+                            ? `<span style="color: green; font-weight: bold;">Good Job!</span>`
+                            : `
+                                <button onclick="clearTask(${task.id})">Yes</button>
+                                <button onclick="sayGoodJob(${task.id})">No</button>
+                            `
+                        }
+                    </td>
+                `;
+
+                table.appendChild(row);
+            });
+        })
+        .catch(err => console.error("Load error:", err));
 }
 
-// SIGNUP
-function signup() {
-    const username = document.getElementById("signupUsername").value;
-    const password = document.getElementById("signupPassword").value;
-
-    fetch("/auth/signup", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ username, password })
-    })
-    .then(res => res.text())
-    .then(data => alert(data));
-}
-
-// LOGIN
-function login() {
-    const username = document.getElementById("loginUsername").value;
-    const password = document.getElementById("loginPassword").value;
-
-    fetch("/auth/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ username, password })
-    })
-    .then(res => res.text())
-    .then(data => {
-        alert(data);
-
-        if (data === "Login successful") {
-
-            loggedInUser = username;
-
-            // Hide auth
-            document.getElementById("authSection").style.display = "none";
-
-            // Show profile
-            document.getElementById("profileSection").style.display = "block";
-            document.getElementById("profileName").innerText = username;
-
-            // Show todo
-            document.getElementById("todoSection").style.display = "block";
-        }
-    });
-}
-
-// ADD TASK
+// ➕ ADD TASK
 function addTask() {
+    const input = document.getElementById("taskInput");
+    const date = document.getElementById("dateInput");
 
-    const taskInput = document.getElementById("taskInput");
-    const task = taskInput.value;
+    if (!input.value.trim()) {
+        alert("Enter task!");
+        return;
+    }
 
-    if (task === "") return;
-
-    const table = document.getElementById("taskTable");
-
-    const row = table.insertRow();
-
-    const cell1 = row.insertCell(0);
-    cell1.innerText = task;
-
-    const cell2 = row.insertCell(1);
-    cell2.innerText = "Pending";
-
-    const cell3 = row.insertCell(2);
-    const doneBtn = document.createElement("button");
-    doneBtn.innerText = "Done";
-
-    doneBtn.onclick = function () {
-        cell2.innerText = "Done";
-
-        const time = new Date().toLocaleTimeString();
-        cell3.innerText = "Done (" + time + ")";
-
-        const cell4 = row.insertCell(3);
-
-        const yesBtn = document.createElement("button");
-        yesBtn.innerText = "Yes";
-
-        const noBtn = document.createElement("button");
-        noBtn.innerText = "No";
-
-        yesBtn.onclick = function () {
-            row.remove();
-        };
-
-        noBtn.onclick = function () {
-            cell4.innerText = "Good Job!";
-        };
-
-        cell4.appendChild(yesBtn);
-        cell4.appendChild(noBtn);
+    const task = {
+        name: input.value.trim(),
+        completed: false,
+        dueDate: date ? date.value : "",
+        completedTime: "",
+        cleared: false
     };
 
-    cell3.appendChild(doneBtn);
-
-    taskInput.value = "";
+    fetch(API, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(task)
+    })
+    .then(() => {
+        input.value = "";
+        if (date) date.value = "";
+        loadTasks();
+    })
+    .catch(err => console.error("Add error:", err));
 }
+
+// ✔ MARK DONE
+function markDone(id) {
+    fetch(API)
+        .then(res => res.json())
+        .then(data => {
+            const task = data.find(t => t.id === id);
+            if (!task) return;
+
+            const time = new Date().toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            task.completed = true;
+            task.completedTime = time;
+
+            // delete + re-add (since PUT नाही)
+            fetch(API + "/" + id, { method: "DELETE" })
+                .then(() => {
+                    fetch(API, {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify(task)
+                    }).then(loadTasks);
+                });
+        });
+}
+
+// ❌ DELETE TASK (YES)
+function clearTask(id) {
+    fetch(API + "/" + id, { method: "DELETE" })
+        .then(loadTasks)
+        .catch(err => console.error("Delete error:", err));
+}
+
+// 👍 GOOD JOB (NO)
+function sayGoodJob(id) {
+    fetch(API)
+        .then(res => res.json())
+        .then(data => {
+            const task = data.find(t => t.id === id);
+            if (!task) return;
+
+            task.cleared = true;
+
+            fetch(API + "/" + id, { method: "DELETE" })
+                .then(() => {
+                    fetch(API, {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify(task)
+                    }).then(loadTasks);
+                });
+        });
+}
+
+// 🔥 INITIAL LOAD
+window.onload = loadTasks;

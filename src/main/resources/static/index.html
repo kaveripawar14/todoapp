@@ -2,55 +2,59 @@
 <html>
 <head>
     <title>Todo App</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            margin: 20px;
+        }
+
+        button {
+            cursor: pointer;
+            margin: 2px;
+        }
+
+        .blue {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+        }
+    </style>
 </head>
+
 <body>
 
 <h1>Todo App</h1>
 
-<!-- AUTH SECTION -->
-<div id="authSection">
+<!-- TODO INPUT SECTION -->
+<div>
 
-    <h2>Login</h2>
-    <input type="text" id="loginUsername" placeholder="Username">
-    <input type="password" id="loginPassword" placeholder="Password">
-    <button onclick="login()">Login</button>
+    <input type="text" id="taskInput" placeholder="Enter task">
+    <input type="date" id="dateInput">
 
-    <p>Don't have an account? 
-        <button onclick="showSignup()">Sign Up</button>
-    </p>
-
-    <div id="signupDiv" style="display:none;">
-        <h2>Signup</h2>
-        <input type="text" id="signupUsername" placeholder="Username">
-        <input type="password" id="signupPassword" placeholder="Password">
-        <button onclick="signup()">Signup</button>
-    </div>
+    <button onclick="addTask()">Add Task</button>
 
 </div>
 
-<!-- PROFILE SECTION -->
-<div id="profileSection" style="display:none;">
-    <h2>Welcome, <span id="profileName"></span> 👤</h2>
-</div>
+<br>
 
-<!-- TODO SECTION -->
-<div id="todoSection" style="display:none;">
+<!-- TASK TABLE -->
+<table border="1" cellpadding="10">
 
-<h2>Add Task</h2>
-<input type="text" id="taskInput" placeholder="Enter task">
-<button onclick="addTask()">Add Task</button>
+    <thead>
+        <tr>
+            <th>Task</th>
+            <th>Due Date</th>
+            <th>Status</th>
+            <th>Completed Time</th>
+            <th>Action</th>
+        </tr>
+    </thead>
 
-<table border="1">
-    <tr>
-        <th>Task</th>
-        <th>Status</th>
-        <th>Action</th>
-        <th>Clear Task</th>
-    </tr>
     <tbody id="taskTable"></tbody>
-</table>
 
-</div>
+</table>
 
 <script src="script.js"></script>
 
